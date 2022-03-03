@@ -1,0 +1,25 @@
+- hosts: ubuntu
+  remote_user: root
+  become: true
+  tasks:
+
+     - name: Check that the /home/distros folder exists
+       stat:
+         path: /home/ubuntu/distros/tomcat
+       register: stat_result
+
+     - name: Create the file, if it doesnt exist already
+       file:
+         path: /home/ubuntu/distros/tomcat
+         state: directory
+       when: not stat_result.stat.exists
+
+     - name: Only run "update_cache=yes" if the last one is more than 3600 seconds ago
+       apt:
+         update_cache: yes
+
+     - name: Install java
+       apt:
+         name: openjdk-8-jdk
+       tags: java
+

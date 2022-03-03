@@ -1,0 +1,17 @@
+- hosts: ubuntu
+  remote_user: root
+  become: true
+  tasks:
+    - name: ensure nginx is at the latest version
+      apt: 
+       name: nginx 
+       state: latest
+    - name: Template a file to /etc/file.conf
+      ansible.builtin.template:
+       src: index.j2 
+       dest: /var/www/html/index.html
+       mode: 0755
+    - name: start nginx
+      service:
+          name: nginx
+          state: started
