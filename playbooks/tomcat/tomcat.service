@@ -1,20 +1,20 @@
 [Unit]
 Description=Apache Tomcat Web Application Container
-After=network.target
+fter=network.target
 
 [Service]
 Type=forking
 
 Environment=JRE_HOME=/usr
 #Environment=JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-Environment=CATALINA_PID=/home/ubuntu/distros/tomcat/apache-tomcat-8.5.57/temp/tomcat.pid
-Environment=CATALINA_HOME=/home/ubuntu/distros/tomcat/apache-tomcat-8.5.57
-Environment=CATALINA_BASE=/home/ubuntu/distros/tomcat/apache-tomcat-8.5.57
+Environment=CATALINA_PID=/home/tomcat/apache-tomcat-8.5.79/temp/tomcat.pid
+Environment=CATALINA_HOME=/home/tomcat/apache-tomcat-8.5.79
+Environment=CATALINA_BASE=/home/tomcat/apache-tomcat-8.5.79
 Environment='CATALINA_OPTS=-Xms512M -Xmx1024M -server -XX:+UseParallelGC'
 Environment='JAVA_OPTS=-Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom'
 
-ExecStart=/home/ubuntu/distros/tomcat/apache-tomcat-8.5.57/bin/startup.sh
-ExecStop=/home/ubuntu/distros/tomcat/apache-tomcat-8.5.57/bin/shutdown.sh
+ExecStart=/home/tomcat/apache-tomcat-8.5.79/bin/startup.sh
+ExecStop=/home/tomcat/apache-tomcat-8.5.79/bin/shutdown.sh
 
 User=root
 Group=root
@@ -24,4 +24,6 @@ Group=root
 
 [Install]
 WantedBy=multi-user.targe
+
+
 

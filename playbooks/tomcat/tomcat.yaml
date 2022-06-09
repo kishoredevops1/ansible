@@ -1,6 +1,6 @@
 ---
-- hosts: tag_Name_master-tomcatserver
-  #connection: local
+- hosts: localhost
+  connection: local
   remote_user: ubuntu
   become: true
   tasks:
@@ -10,7 +10,7 @@
          path: /home/tomcat
        register: stat_result
 
-     - name: Create the file, if it doesnt exist already
+     - name: Create the folder, if it doesnt exist already
        file:
          path: /home/tomcat
          state: directory
@@ -21,29 +21,54 @@
          update_cache: yes
          cache_valid_time: 3600
 
-     - name: Install Maven
+     - name: Install java and maven
        apt: name={{item}} state=present update_cache=yes
        with_items:
-         - maven
          - openjdk-8-jdk
+         - maven
 
      - name: Check that the download tomcat exists
        stat:
-         path: /home/tomcat/apache-tomcat-8.5.57.tar.gz
+         path: /home/tomcat/apache-tomcat-8.5.79.tar.gz
        register: stat_result1
-
-     - name: download file with custom HTTP headers
-       get_url:
-         url: http://apachemirror.wuchna.com/tomcat/tomcat-8/v8.5.57/bin/apache-tomcat-8.5.57.tar.gz
-         dest: /home/distros
+     - name: Copying tomcat.tar.gz.file
+       copy:
+         src: ./apache-tomcat-8.5.79.tar.gz
+         dest: /home/tomcat/
        when: not stat_result1.stat.exists
 
+       #     - name: download file with custom HTTP headers
+       # get_url:
+       #  url: https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.79/bin/apache-tomcat-8.5.79.tar.gz
+       #  dest: /home/tomcat
+       # when: not stat_result1.stat.exists
      - name: Extract the Tomcat
        unarchive:
-         src: /home/tomcat/apache-tomcat-8.5.57.tar.gz
+         src: /home/tomcat/apache-tomcat-8.5.79.tar.gz
          dest: /home/tomcat
          remote_src: yes
 
+     - name: Copy file with owner and permissions
+       copy:
+         src: ./tomcat.service
+         dest: /etc/systemd/system/tomcat.service
+         owner: root
+         group: root
+         mode: '0644'
 
+     - name: Just force systemd to reread configs (2.4 and above)
+       ansible.builtin.systemd:
+         daemon_reload: yes
 
+     - name: Stop service tomcat
+       ansible.builtin.service:
+        name: tomcat
+        state: stopped
+       tags: stop-tomcat
+
+     - name: Start service tomcat, if not started
+       ansible.builtin.service:
+        name: tomcat
+        state: started
+       tags: start-tomcat
 
