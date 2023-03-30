@@ -30,12 +30,14 @@
          # update_cache: yes
          #cache_valid_time: 3600
          # when: not java_result.stat.exists
+     - name: Execute the command in remote shell; 
+       ansible.builtin.shell: apt-get update 
 
      - name: Install java
        apt:
          update_cache: yes 
          name: openjdk-8-jdk
-       when: java_result.rc!=0
+           #when: java_result.rc!=0
 
      - name: Check that the download tomcat exists
        stat:
